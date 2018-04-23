@@ -5,7 +5,8 @@ Docker is a radical way to host an Oracle APEX environment on your computer that
 minimizes the strain you impose on your system’s memory 
 and maximizes your potential to version and share your database configuration. 
 In this post, I’m going to cover the details of running the latest version of APEX from scratch on your computer, using Docker.
-Ingredients
+
+## Ingredients
 Let’s begin by assembling our ingredients.
 APEX
 1st ingredient - Download the latest version of APEX and unzip it in the path ~/docker/. 
@@ -18,14 +19,15 @@ Next up Download the latest version of ORDS. To do this, simply google download 
 Final ingredient - make sure that Docker installed on your computer. You can do this by typing ‘docker version’ on the command line. Make sure you can also login.
 While we’re at it. Visit store.docker.com, login, search for oracle enterprise edition and agree to the terms and conditions.
 
-Create the oracle container
+## Create the oracle container
 Now that we have all of these prerequisites assembled, let’s start by kicking off your Oracle db and installing the latest version of APEX. 
-Small configuration
+
+### Small configuration
 2 small pieces of configuration:
  create a an empty folder called ‘oracle’ in the path ~/docker. You are going to mount to this folder to your docker container so that all database configuration gets stored in this folder. This is not a requirement but it gives you some options to share your configuration with your team-mates, as we will discuss.
 Create a docker network. I’m going to call it ‘oracle_network’. Super simple - this will permit your containers to easily talk with one another.
 
-Command
+### Container command
 docker run -d -it \
 --name oracle \
 -p 32122:1521 \
@@ -46,7 +48,7 @@ The last line in this ‘docker run’ command refers to the official oracle dat
 
 Depending on the processing power of your computer, your oracle container may take a few minutes to start up. In the background, know that a ton of configuration scripts are being run inside your container, building the database and populating your mounted docker/oracle folder with around 6GB worth of configuration files. 
 
-Run apex install script
+### Run apex install script
 Once the oracle container has a status of healthy, you can log in and configure it to where you want it to be… be warned - while this step isn’t complicated, it could easily take over 20 minutes.
 
 We start by logging into the container and navigating to the mounted folder that contains the configuration files for the latest version of apex.
@@ -111,9 +113,10 @@ begin
 end;
 /
 And you create an admin user to log into APEX - I hope you remembered to switch out the placeholder email here.
-.
-Create the ORDS container
-Build the ORDS image
+
+
+## Create the ORDS container
+### Build the ORDS image
 3rd step
 While the previous step is cooking, you can start to prepare a 2nd container for our Oracle Rest Data Services. There is currently no Oracle ORDS official Docker image in the repository but with the ingredients you assembled  in your ~/docker/ords folder at the top of this video, you can easily build the requisite image yourself and then, if you like, share it with your teammates by pushing it your docker hub.
 To build the requisite ORDS image, navigate to your docker/ords folder and run this docker build command
@@ -123,7 +126,7 @@ If you want to spare your teammates from the minor inconvenience of downloading 
 docker push <your docker username>/ords:3.0.12
 I’d offer to share my own with you but doing so may violate Oracle’s terms and conditions.
 
-Run the ORDS container
+### Run the ORDS container
 For this final step - You’ll want to wait for your apex installation script to complete before going further. In this step, you’ll spin up your ORDS container that will talk to your Oracle database and finally be able to access your APEX web interface.
 docker run -t -i \
   --name ords_514 \
