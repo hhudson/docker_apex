@@ -1,9 +1,25 @@
 # Launch APEX with Docker
+
+<!-- TOC -->
+
+- [Launch APEX with Docker](#launch-apex-with-docker)
+    - [Intro](#intro)
+    - [Ingredients](#ingredients)
+    - [Create the oracle container](#create-the-oracle-container)
+        - [Small configuration](#small-configuration)
+        - [Container command](#container-command)
+        - [Run apex install script](#run-apex-install-script)
+    - [Create the ORDS container](#create-the-ords-container)
+        - [Build the ORDS image](#build-the-ords-image)
+        - [Run the ORDS container](#run-the-ords-container)
+
+<!-- /TOC -->
+
 ## Intro
 
 Docker is a radical way to host an Oracle APEX environment on your computer that both 
-minimizes the strain you impose on your system’s memory 
-and maximizes your potential to version and share your database configuration. 
+1. minimizes the strain you impose on your system’s memory 
+1. and maximizes your potential to version and share your database configuration. 
 In this post, I’m going to cover the details of running the latest version of APEX from scratch on your computer, using Docker.
 
 ## Ingredients
