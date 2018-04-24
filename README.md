@@ -77,7 +77,7 @@ hayden@mac:~/docker$ mkdir oracle
  ```
  2. Create a docker network. I’m going to call it ‘oracle_network’. This will permit your containers to easily talk with one another.
  ```console
-hayden@mac: ~$ docker network create oracle_network
+hayden@mac:~$ docker network create oracle_network
  ```
 
 
@@ -96,17 +96,25 @@ store/oracle/database-enterprise:12.2.0.1
 Let's walk through this command  - 
 
 1. You’ve given this container the name ‘oracle’, which means other containers on the ‘oracle_network’ can refer to it by this name
-You map the container’s database port 1521 to external port 32122
-1. You set the timezone to your own
-1. You instruct it to listen on the network you’ve created
+You map the container’s database port 1521 to external port 32122.
+1. You set the timezone to your own.
+1. You instruct it to listen on the network you’ve created, 'oracle_network'.
 1. As I touched on earlier, you then map your local  folder structure ~/docker/oracle to the container’s folder /ORCL. all the database configuration will be stored here. This is a good idea because, after you’ve done all that you want with the database, you can simply zip and share the contents of this folder with your teammates, thereby sparing them from having to repeat your work.
-1. I also mount the local folder docker/apex to the container.
+1. You also mount the local folder ~/docker/apex to the container.
 1. The last line in this ‘docker run’ command refers to the official oracle database image on the docker repository. This will work if you’ve already accepted  their license agreement on store.docker.com
 
 Depending on the processing power of your computer, your oracle container may take over 5 minutes to start up. In the background, know that a ton of configuration scripts are being run inside your container, building the database and populating your mounted ~/docker/oracle folder with around 6GB worth of configuration files. 
 
+You can check the status of your container with the command:
+```console
+hayden@mac:~$ docker ps
+CONTAINER ID        IMAGE                                       COMMAND                  CREATED             STATUS                        PORTS                               NAMES
+221b75906a65        store/oracle/database-enterprise:12.2.0.1   "/bin/sh -c '/bin/ba…"   12 days ago         Up About a minute (healthy)   5500/tcp, 0.0.0.0:32122->1521/tcp   oracle
+
+```
+
 ### Run apex install script
-Once the oracle container has a status of healthy, you can log in and configure it to where you want it to be… be warned - while this step isn’t complicated, it could easily take over 20 minutes.
+Once the oracle container has a status of 'healthy', you can log in and configure it to where you want it to be… be warned - while this step isn’t complicated, it could easily take over 20 minutes.
 
 We start by logging into the container and navigating to the mounted folder that contains the configuration files for the latest version of apex.
 
