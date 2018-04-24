@@ -1,4 +1,4 @@
-# Launch APEX with Docker youtube shownotes
+# Launch APEX with Docker
 ## Intro
 
 Docker is a radical way to host an Oracle APEX environment on your computer that both 
