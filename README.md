@@ -31,32 +31,32 @@ Let’s begin by assembling our ingredients.
 
 #### APEX
 * 1st ingredient - Download [the latest version of APEX](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) and unzip it in the path ~/docker/. 
-```bash
-~/docker$ mv ~/Downloads/apex_5.1.4.zip .
-~/docker$ unzip apex_5.1.4.zip
+```console
+hayden@mac:~/docker$ mv ~/Downloads/apex_5.1.4.zip .
+hayden@mac:~/docker$ unzip apex_5.1.4.zip
 ```
 * Download my database configuration script: [install_apex514.sh](https://github.com/hhudson/docker_apex/blob/master/install_apexpdb514.sh) and move it to the directory you just created ~/docker/apex/. Make sure you replace the email on line 37 with your own email.
-```bash
-~/docker/apex$ mv ~/Downloads/install_apex514.sh .
+```console
+hayden@mac:~/docker/apex$ mv ~/Downloads/install_apex514.sh .
 ```
 
 #### ORDS
 We need 2 things for Oracle Rest Data Service too
 * Git clone Martin D'Souza's [git repo](https://github.com/martindsouza/docker-ords) in the path ~/docker/ords/
-```bash
-~/docker/ords$ git clone https://github.com/martindsouza/docker-ords.git .
+```console
+hayden@mac:~/docker/ords$ git clone https://github.com/martindsouza/docker-ords.git .
 ```
 * Download [the latest version of ORDS](http://www.oracle.com/technetwork/developer-tools/rest-data-services/downloads/index.html). Unzip it in the same folder ~/docker/ords/.
-```
-~/docker/ords$ mv ~/Downloads/ords.17.4.1.353.06.48.zip .
-~/docker/ords$ unzip ords.17.4.1.353.06.48.zip 
+```console
+hayden@mac:~/docker/ords$ mv ~/Downloads/ords.17.4.1.353.06.48.zip .
+hayden@mac:~/docker/ords$ unzip ords.17.4.1.353.06.48.zip 
 ```
 
 
 #### Docker
 * Make sure that Docker installed on your computer.
-```bash
-~/docker$ docker version
+```console
+hayden@mac:~/docker$ docker version
 Client:
  Version:	18.03.0-ce
  ...
@@ -72,18 +72,18 @@ Now that we have all of these prerequisites assembled, let’s start by kicking 
 #### 2 small pieces of configuration
 
  1. Create a an empty folder called ‘oracle’ in the path ~/docker. You are going to mount to this folder to your docker container so that all database configuration gets stored in this folder. This is not a requirement but it gives you some options to share your configuration with your team-mates, as we will discuss:
- ```bash
- ~/docker$ mkdir oracle
+ ```console
+hayden@mac:~/docker$ mkdir oracle
  ```
  2. Create a docker network. I’m going to call it ‘oracle_network’. This will permit your containers to easily talk with one another.
- ```bash
- ~$ docker network create oracle_network
+ ```console
+hayden@mac: ~$ docker network create oracle_network
  ```
 
 
 ### Container command
 ```console
-foo@bar:~$ docker run -d -it \
+hayden@mac:~$ docker run -d -it \
 --name oracle \
 -p 32122:1521 \
 -e TZ=America/New_york \
@@ -196,8 +196,8 @@ I’d offer to share my own with you but doing so may violate Oracle’s terms a
 
 ### Run the ORDS container
 For this final step - You’ll want to wait for your apex installation script to complete before going further. In this step, you’ll spin up your ORDS container that will talk to your Oracle database and finally be able to access your APEX web interface.
-```bash
-~$ docker run -t -i \
+```console
+hayden@mac:~$ docker run -t -i \
   --name ords_514 \
   --network=oracle_network \
   -e TZ=America/Edmonton \
