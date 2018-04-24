@@ -11,7 +11,7 @@
     - [Create the oracle container](#create-the-oracle-container)
             - [2 small pieces of configuration](#2-small-pieces-of-configuration)
         - [Container command](#container-command)
-        - [Run apex install script](#run-apex-install-script)
+        - [Run database configuration script (install APEX)](#run-database-configuration-script-install-apex)
     - [Create the ORDS container](#create-the-ords-container)
         - [Build the ORDS image](#build-the-ords-image)
         - [Run the ORDS container](#run-the-ords-container)
@@ -113,24 +113,34 @@ CONTAINER ID        IMAGE                                       COMMAND         
 
 ```
 
-### Run apex install script
-Once the oracle container has a status of 'healthy', you can log in and configure it to where you want it to be… be warned - while this step isn’t complicated, it could easily take over 20 minutes.
+### Run database configuration script (install APEX)
+Once the oracle container has a status of 'healthy', you can log in and configure it to where you want it to be. Fair warning: while this step isn’t complicated, it could easily take over 20 minutes.
 
-We start by logging into the container and navigating to the mounted folder that contains the configuration files for the latest version of apex.
+The configuration is easy to kick-off:
+1. Log into the container
+1. Navigate to the mounted folder that contains the configuration files for the latest version of APEX
+1. Make my configuration script executable (we moved it to this folder earlier)
+1. Run the script
+```console
+hayden@mac:~$ docker exec -it oracle bash
+[oracle@221b75906a65 /]$ cd /tmp/apex/
+[oracle@221b75906a65 apex]$ chmod +x install_apexpdb514.sh
+[oracle@221b75906a65 apex]$ ./install_apexpdb514.sh
+```
 
-After making my configuration file, executable, kick it off and we’ll discuss what’s it doing.
 
-Here are the steps you’re performing:
+Let's walk through the commands in this script:
 ```sql
 @apxremov.sql;
 ```
 You start by 1st removing the existing APEX installation in the container database. This is necessary if you want to create a pluggable database (or pdb) that does not have APEX preinstalled.
 
+
 ```sql
 create pluggable database orclpdb514 admin user pdb_adm identified by Oradoc_db1
 file_name_convert=('/u02/app/oracle/oradata/ORCL/pdbseed/','/u02/app/oracle/oradata/ORCL/ORCLPDB514/');
 ```
-You then proceed to create a new pdb with 514 in the name because we plan to install APEX 5.1.4
+You then proceed to create a new pdb with 514 in the name because we plan to install APEX 5.1.4.
 
 ```sql
 alter pluggable database orclpdb514 open read write;
@@ -190,16 +200,21 @@ And you create an admin user to log into APEX - I hope you remembered to switch 
 
 ## Create the ORDS container
 ### Build the ORDS image
-3rd step
 
-While the previous step is cooking, you can start to prepare a 2nd container for our Oracle Rest Data Services. There is currently no Oracle ORDS official Docker image in the repository but with the ingredients you assembled  in your ~/docker/ords folder at the top of this video, you can easily build the requisite image yourself and then, if you like, share it with your teammates by pushing it your docker hub.
+While the previous step is cooking, you can start to prepare a 2nd container for our Oracle Rest Data Services. There is currently no Oracle ORDS official Docker image in the repository but with the ingredients you assembled  in your ~/docker/ords folder at the top of this tutorial, you can easily build the requisite image yourself and then, if you like, share it with your teammates by pushing it your docker hub.
 To build the requisite ORDS image, navigate to your docker/ords folder and run this docker build command
-```bash
-~/docker/ords$ docker build -t ords:3.0.12 .
+```console
+hayden@mac:~/docker/ords$ docker build -t ords:3.0.12 .
 ```
-Upon successful completion, you’ll find an image with the name ords in your docker images
+Upon successful completion, you’ll find an image with the name ords in your docker images.
+
 If you want to spare your teammates from the minor inconvenience of downloading the latest version of ORDS and cloning Martin D’Souza’s git repository as we did at the top of the video, you can push this image to your docker hub with the commands:
-docker push <your docker username>/ords:3.0.12
+```console
+haydenhudson@Haydens-MacBook-Air:~$ docker images | grep ords
+ords                               3.0.12              06b3950c1d58        12 days ago         193MB
+
+hayden@mac:~/docker push haydenhhudson/ords:3.0.12
+```
 I’d offer to share my own with you but doing so may violate Oracle’s terms and conditions.
 
 ### Run the ORDS container
@@ -245,10 +260,10 @@ if you
 1. zip and share the contents of your ~/docker/oracle folder
 2. push your ords image to your docker hub
 
-You can spare your colleagues from having to download ords, clone Martin D’Souza’s git repo and perform any configuration on the oracle container. See show notes for more details.
+You can spare your colleagues from having to download ords, clone Martin D’Souza’s git repo and perform any configuration on the oracle container. 
 
-The docker run command for spin up their oracle container would be the same but it would be faster for them because they’d be mounting it a pre-populated ~/docker/oracle folder. 
-The docker command for spinning up the ords container would also be the same, except you would substitute the image reference at the end of the command with a reference the ords image you pushed to your docker hub.
+The docker run command for spinning up their oracle container would be the same but it would be faster for them because they’d be mounting it a pre-populated ~/docker/oracle folder. 
+The docker command for spinning up the ORDS container would also be the same, except you would substitute the image reference at the end of the command with a reference the ords image you pushed to your docker hub.
 
 All of these recommendations are of subject to the constraints of your Oracle License agreement. 
 
