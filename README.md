@@ -30,29 +30,60 @@ In this post, I’m going to cover the details of running the latest version of 
 Let’s begin by assembling our ingredients.
 
 #### APEX
-1. 1st ingredient - Download [the latest version of APEX](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) and unzip it in the path ~/docker/. 
-1. Download my database configuration script: [install_apex514.sh](https://github.com/hhudson/docker_apex/blob/master/install_apexpdb514.sh)and move it to the directory you just created ~/docker/apex/. Make sure you replace the email on line 37 with your own email.
+* 1st ingredient - Download [the latest version of APEX](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) and unzip it in the path ~/docker/. 
+```bash
+~/docker$ mv ~/Downloads/apex_5.1.4.zip .
+~/docker$ unzip apex_5.1.4.zip
+```
+* Download my database configuration script: [install_apex514.sh](https://github.com/hhudson/docker_apex/blob/master/install_apexpdb514.sh) and move it to the directory you just created ~/docker/apex/. Make sure you replace the email on line 37 with your own email.
+```bash
+~/docker/apex$ mv ~/Downloads/install_apex514.sh .
+```
 
 #### ORDS
 We need 2 things for Oracle Rest Data Service too
-1. 1st off - Git clone the git repo of my colleague Martin D’Souza (see shownotes) in the path ~/docker/ords/
-1. Next up Download the latest version of ORDS. To do this, simply google download oracle ords, hit the 1st link, accept the license agreement. Then, unzip it in the same folder ~/docker/ords/
+* Git clone Martin D'Souza's [git repo](https://github.com/martindsouza/docker-ords) in the path ~/docker/ords/
+```bash
+~/docker/ords$ git clone https://github.com/martindsouza/docker-ords.git .
+```
+* Download [the latest version of ORDS](http://www.oracle.com/technetwork/developer-tools/rest-data-services/downloads/index.html). Unzip it in the same folder ~/docker/ords/.
+```
+~/docker/ords$ mv ~/Downloads/ords.17.4.1.353.06.48.zip .
+~/docker/ords$ unzip ords.17.4.1.353.06.48.zip 
+```
+
 
 #### Docker
-Final ingredient - make sure that Docker installed on your computer. You can do this by typing ‘docker version’ on the command line. Make sure you can also login.
-While we’re at it. Visit store.docker.com, login, search for oracle enterprise edition and agree to the terms and conditions.
+* Make sure that Docker installed on your computer.
+```bash
+~/docker$ docker version
+Client:
+ Version:	18.03.0-ce
+ ...
+```
+* Visit store.docker.com to accept the Oracle terms and conditions for using their database image: 
+    1. login
+    1. search for 'oracle enterprise edition'
+    1. agree to the terms and conditions.
 
 ## Create the oracle container
-Now that we have all of these prerequisites assembled, let’s start by kicking off your Oracle db and installing the latest version of APEX. 
+Now that we have all of these prerequisites assembled, let’s start by kicking off your Oracle database and installing the latest version of APEX. 
 
 #### 2 small pieces of configuration
 
- 1. Create a an empty folder called ‘oracle’ in the path ~/docker. You are going to mount to this folder to your docker container so that all database configuration gets stored in this folder. This is not a requirement but it gives you some options to share your configuration with your team-mates, as we will discuss.
- 1. Create a docker network. I’m going to call it ‘oracle_network’. Super simple - this will permit your containers to easily talk with one another.
+ 1. Create a an empty folder called ‘oracle’ in the path ~/docker. You are going to mount to this folder to your docker container so that all database configuration gets stored in this folder. This is not a requirement but it gives you some options to share your configuration with your team-mates, as we will discuss:
+ ```bash
+ ~/docker$ mkdir oracle
+ ```
+ 2. Create a docker network. I’m going to call it ‘oracle_network’. This will permit your containers to easily talk with one another.
+ ```bash
+ ~$ docker network create oracle_network
+ ```
+
 
 ### Container command
-```bash
-docker run -d -it \
+```console
+foo@bar:~$ docker run -d -it \
 --name oracle \
 -p 32122:1521 \
 -e TZ=America/New_york \
@@ -62,17 +93,17 @@ docker run -d -it \
 store/oracle/database-enterprise:12.2.0.1
 ```
 
-Now let’s launch our oracle database  - 
+Let's walk through this command  - 
 
 1. You’ve given this container the name ‘oracle’, which means other containers on the ‘oracle_network’ can refer to it by this name
 You map the container’s database port 1521 to external port 32122
 1. You set the timezone to your own
 1. You instruct it to listen on the network you’ve created
-1. As I touched on earlier, you then map your local  folder structure docker/oracle to the container’s folder /ORCL. all the database configuration will be stored here. This is a good idea because, after you’ve done all that you want with the database, you can simply zip and share the contents of this folder with your teammates, thereby sparing them from having to repeat your work.
+1. As I touched on earlier, you then map your local  folder structure ~/docker/oracle to the container’s folder /ORCL. all the database configuration will be stored here. This is a good idea because, after you’ve done all that you want with the database, you can simply zip and share the contents of this folder with your teammates, thereby sparing them from having to repeat your work.
 1. I also mount the local folder docker/apex to the container.
 1. The last line in this ‘docker run’ command refers to the official oracle database image on the docker repository. This will work if you’ve already accepted  their license agreement on store.docker.com
 
-Depending on the processing power of your computer, your oracle container may take a few minutes to start up. In the background, know that a ton of configuration scripts are being run inside your container, building the database and populating your mounted docker/oracle folder with around 6GB worth of configuration files. 
+Depending on the processing power of your computer, your oracle container may take over 5 minutes to start up. In the background, know that a ton of configuration scripts are being run inside your container, building the database and populating your mounted ~/docker/oracle folder with around 6GB worth of configuration files. 
 
 ### Run apex install script
 Once the oracle container has a status of healthy, you can log in and configure it to where you want it to be… be warned - while this step isn’t complicated, it could easily take over 20 minutes.
@@ -156,7 +187,7 @@ And you create an admin user to log into APEX - I hope you remembered to switch 
 While the previous step is cooking, you can start to prepare a 2nd container for our Oracle Rest Data Services. There is currently no Oracle ORDS official Docker image in the repository but with the ingredients you assembled  in your ~/docker/ords folder at the top of this video, you can easily build the requisite image yourself and then, if you like, share it with your teammates by pushing it your docker hub.
 To build the requisite ORDS image, navigate to your docker/ords folder and run this docker build command
 ```bash
-docker build -t ords:3.0.12 .
+~/docker/ords$ docker build -t ords:3.0.12 .
 ```
 Upon successful completion, you’ll find an image with the name ords in your docker images
 If you want to spare your teammates from the minor inconvenience of downloading the latest version of ORDS and cloning Martin D’Souza’s git repository as we did at the top of the video, you can push this image to your docker hub with the commands:
@@ -166,7 +197,7 @@ I’d offer to share my own with you but doing so may violate Oracle’s terms a
 ### Run the ORDS container
 For this final step - You’ll want to wait for your apex installation script to complete before going further. In this step, you’ll spin up your ORDS container that will talk to your Oracle database and finally be able to access your APEX web interface.
 ```bash
-docker run -t -i \
+~$ docker run -t -i \
   --name ords_514 \
   --network=oracle_network \
   -e TZ=America/Edmonton \
