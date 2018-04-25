@@ -15,12 +15,15 @@
     - [Create the ORDS container](#create-the-ords-container)
         - [Build the ORDS image](#build-the-ords-image)
         - [Run the ORDS container](#run-the-ords-container)
+    - [Share and version your work](#share-and-version-your-work)
+        - [Suggestion](#suggestion)
+        - [Disclaimer](#disclaimer)
 
 <!-- /TOC -->
 
 ## Intro
 
-Docker is a radical way to host an Oracle APEX environment on your computer that both 
+Docker is a radical way to host an Oracle APEX environment on your computer that:
 1. minimizes the strain you impose on your system’s memory 
 1. maximizes your potential to version and share your database configuration. 
 
@@ -234,7 +237,7 @@ hayden@mac:~$ docker run -t -i \
   --volume ~/docker/apex/images:/ords/apex-images \
   -p 32514:8080 \
   ords:3.0.12
-  ```
+```
 
 Let’s walk through this command
 1. You name the container ords_514 to match the name of the oracle pluggable database and APEX version because that gives the option to simultaneously spin up other ords containers that serve up different APEX installations on different pdbs in your multitenant oracle database. Next time you want to start this container, to state the possibly obvious, you’d simply run docker start ords_514
@@ -253,10 +256,11 @@ After running this command and getting no error messages, we can now switch to a
 
 You can now log into your APEX Internal workspace with the values set by the APEX installation script you ran earlier: username ADMIN, password Oradoc_db1.
 
+
 ## Share and version your work
 Don’t forget - your work can be leveraged for the benefit your colleagues to spare them some of the heavy lifting your just did.
 if you
-1. zip and share the contents of your ~/docker/oracle folder
+1. share the contents of your ~/docker/oracle folder
 2. push your ords image to your docker hub
 
 For your colleagues this would mean:
@@ -273,4 +277,5 @@ For your colleagues this would mean:
 ### Disclaimer
 
 All of these recommendations are of subject to the constraints of your Oracle License agreement. 
+
 
