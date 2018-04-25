@@ -27,10 +27,9 @@ Docker is a radical way to host an Oracle APEX environment on your computer that
 In this post, I’m going to cover the details of running the latest version of APEX from scratch on your computer, using Docker. I also made a [youtube video](https://www.youtube.com/watch?v=lliX7VflxBU) of this exercise.
 
 ## Ingredients
-Let’s begin by assembling our ingredients.
 
 #### APEX
-* 1st ingredient - Download [the latest version of APEX](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) and unzip it in the path ~/docker/. 
+* Download [the latest version of APEX](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) and unzip it in the path ~/docker/. 
 ```console
 hayden@mac:~/docker$ mv ~/Downloads/apex_5.1.4.zip .
 hayden@mac:~/docker$ unzip apex_5.1.4.zip
@@ -260,10 +259,18 @@ if you
 1. zip and share the contents of your ~/docker/oracle folder
 2. push your ords image to your docker hub
 
-You can spare your colleagues from having to download ords, clone Martin D’Souza’s git repo and perform any configuration on the oracle container. 
+For your colleagues this would mean:
+* No downloading ORDS 
+* No cloning Martin D’Souza’s git repo
+* No performing any configuration on the oracle container, including installing APEX. 
 
-The docker run command for spinning up their oracle container would be the same but it would be faster for them because they’d be mounting it a pre-populated ~/docker/oracle folder. 
-The docker command for spinning up the ORDS container would also be the same, except you would substitute the image reference at the end of the command with a reference the ords image you pushed to your docker hub.
+### Suggestion
+
+* Use a private github repo and pay for additional space. With [Git LFS](https://git-lfs.github.com/) and $5/month you can buy 50gb worth of space and preserve a library of database snapshots that you and your team mates can clone into your ~/docker/oracle folder. 
+    * With this setup the docker command for spinning up the Oracle container for the 1st time would be the same but, the execution would be faster because the docker container would not need to build the database.
+
+
+### Disclaimer
 
 All of these recommendations are of subject to the constraints of your Oracle License agreement. 
 
