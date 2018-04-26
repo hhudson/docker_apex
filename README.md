@@ -259,7 +259,7 @@ You then pass in the appropriate values for the passwords for the database users
 1.You map the container’s port 8080 to port 32514 so you can access it in your browser on port 32514
 1. Finally you instruct your container to build on the docker image that you built
 
-After running this command and getting no error messages, we can now switch to a browser to confirm that we’re done.
+After running this command and getting no error messages, we can now switch to a browser to confirm that we’re done: [http://localhost:32514/ords](http://localhost:32514/ords)
 
 You can now log into your APEX Internal workspace with the values set by the APEX installation script you ran earlier: username ADMIN, password Oradoc_db1.
 
