@@ -19,6 +19,7 @@
     - [Share and version your work](#share-and-version-your-work)
         - [Suggestion](#suggestion)
         - [Disclaimer](#disclaimer)
+    - [Next steps](#next-steps)
 
 <!-- /TOC -->
 
@@ -284,5 +285,9 @@ For your colleagues this would mean:
 ### Disclaimer
 
 All of these recommendations are of subject to the constraints of your Oracle License agreement. 
+
+## Next steps
+
+I have collected some thoughts on how to use your freshly minted Oracle APEX Dev environment and collaborate with your colleages in the following [blog post](https://2122.IO/apex/f?p=BLOG:SDLC).
 
 
