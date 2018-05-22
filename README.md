@@ -28,7 +28,7 @@ Docker is a radical way to host an Oracle APEX environment on your computer that
 1. minimizes the strain you impose on your system’s memory 
 1. maximizes your potential to version and share your database configuration. 
 
-This post was made to support of a [youtube video](https://www.youtube.com/watch?v=lliX7VflxBU) I made. In this post, I’m going to cover the details of running the latest version of APEX from scratch on your computer, using Docker. 
+This post was made to support of a [youtube video](https://www.youtube.com/watch?v=WlkCN516OUI) I made. In this post, I’m going to cover the details of running the latest version of APEX from scratch on your computer, using Docker. 
 
 ### References
 
