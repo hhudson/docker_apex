@@ -42,12 +42,12 @@ All of my code has been assembled from the following sources:
 #### APEX
 * Download [the latest version of APEX](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) and unzip it in the path ~/docker/. 
 ```console
-hayden@mac:~/docker$ mv ~/Downloads/apex_5.1.4.zip .
-hayden@mac:~/docker$ unzip apex_5.1.4.zip
+hayden@mac:~/docker$ mv ~/Downloads/apex_18.1.zip .
+hayden@mac:~/docker$ unzip apex_18.1.zip
 ```
-* Download my database configuration script: [install_apex514.sh](https://github.com/hhudson/docker_apex/blob/master/install_apexpdb514.sh) and move it to the directory you just created ~/docker/apex/. Make sure you replace the email on line 37 with your own email.
+* Download my database configuration script: [install_apex181.sh](https://github.com/hhudson/docker_apex/blob/master/install_apexpdb181.sh) and move it to the directory you just created ~/docker/apex/. Make sure you replace the email on line 37 with your own email.
 ```console
-hayden@mac:~/docker/apex$ mv ~/Downloads/install_apex514.sh .
+hayden@mac:~/docker/apex$ mv ~/Downloads/install_apex181.sh .
 ```
 
 #### ORDS
@@ -134,8 +134,8 @@ The configuration is easy to kick-off:
 ```console
 hayden@mac:~$ docker exec -it oracle bash
 [oracle@221b75906a65 /]$ cd /tmp/apex/
-[oracle@221b75906a65 apex]$ chmod +x install_apexpdb514.sh
-[oracle@221b75906a65 apex]$ ./install_apexpdb514.sh
+[oracle@221b75906a65 apex]$ chmod +x install_apexpdb181.sh
+[oracle@221b75906a65 apex]$ ./install_apexpdb181.sh
 ```
 
 
@@ -147,22 +147,22 @@ You start by 1st removing the existing APEX installation in the container databa
 
 
 ```sql
-create pluggable database orclpdb514 admin user pdb_adm identified by Oradoc_db1
-file_name_convert=('/u02/app/oracle/oradata/ORCL/pdbseed/','/u02/app/oracle/oradata/ORCL/ORCLPDB514/');
+create pluggable database orclpdb181 admin user pdb_adm identified by Oradoc_db1
+file_name_convert=('/u02/app/oracle/oradata/ORCL/pdbseed/','/u02/app/oracle/oradata/ORCL/ORCLPDB181/');
 ```
-You then proceed to create a new pdb with 514 in the name because we plan to install APEX 5.1.4.
+You then proceed to create a new pdb with 181 in the name because we plan to install APEX 18.1.
 
 ```sql
-alter pluggable database orclpdb514 open read write;
+alter pluggable database orclpdb181 open read write;
 alter pluggable database all save state;
 ```
 You open the pdb.
 
 ```sql
-Alter session set container = ORCLPDB514;
+Alter session set container = ORCLPDB181;
 @apexins.sql SYSAUX SYSAUX TEMP /i/;
 ```
-You install APEX 5.1.4 in the new pdb - - this step takes a while
+You install APEX 18.1 in the new pdb - - this step takes a while
 
 ```sql
 @apex_rest_config_core.sql oracle oracle;
@@ -231,24 +231,24 @@ I’d offer to share my own with you but doing so may violate Oracle’s terms a
 For this final step - You’ll want to wait for your apex installation script to complete before going further. In this step, you’ll spin up your ORDS container that will talk to your Oracle database and finally be able to access your APEX web interface.
 ```console
 hayden@mac:~$ docker run -t -i \
-  --name ords_514 \
+  --name ords_181 \
   --network=oracle_network \
   -e TZ=America/Edmonton \
   -e DB_HOSTNAME=oracle \
   -e DB_PORT=1521 \
-  -e DB_SERVICENAME=orclpdb514.localdomain \
+  -e DB_SERVICENAME=orclpdb181.localdomain \
   -e APEX_PUBLIC_USER_PASS=oracle \
   -e APEX_LISTENER_PASS=oracle \
   -e APEX_REST_PASS=oracle \
   -e ORDS_PASS=oracle \
   -e SYS_PASS=Oradoc_db1 \
   --volume ~/docker/apex/images:/ords/apex-images \
-  -p 32514:8080 \
+  -p 32181:8080 \
   ords:3.0.12
 ```
 
 Let’s walk through this command
-1. You name the container ords_514 to match the name of the oracle pluggable database and APEX version because that gives the option to simultaneously spin up other ords containers that serve up different APEX installations on different pdbs in your multitenant oracle database. Next time you want to start this container, to state the possibly obvious, you’d simply run docker start ords_514
+1. You name the container ords_181 to match the name of the oracle pluggable database and APEX version because that gives the option to simultaneously spin up other ords containers that serve up different APEX installations on different pdbs in your multitenant oracle database. Next time you want to start this container, to state the possibly obvious, you’d simply run docker start ords_181
 1. As before, you place this container on the oracle_network that you created so that it can communicate with the oracle container.
 You set the appropriate timezone
 1. Next, we pass in some configuration property values necessary for the ords installation. 
@@ -257,10 +257,10 @@ You set the appropriate timezone
 1. You instruct this installation of ords to listen for the pdb that we specially configured with the latest version of APEX
 You then pass in the appropriate values for the passwords for the database users APEX_PUBLIC_USER, APEX_LISTENER, APEX_REST, ORDS and SYS
 1. You mount the local apex images folder so that ORDS can serve them up appropriately
-1.You map the container’s port 8080 to port 32514 so you can access it in your browser on port 32514
+1.You map the container’s port 8080 to port 32181 so you can access it in your browser on port 32181
 1. Finally you instruct your container to build on the docker image that you built
 
-After running this command and getting no error messages, we can now switch to a browser to confirm that we’re done: [http://localhost:32514/ords](http://localhost:32514/ords)
+After running this command and getting no error messages, we can now switch to a browser to confirm that we’re done: [http://localhost:32181/ords](http://localhost:32181/ords)
 
 You can now log into your APEX Internal workspace with the values set by the APEX installation script you ran earlier: username ADMIN, password Oradoc_db1.
 
