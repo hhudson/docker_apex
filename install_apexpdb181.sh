@@ -5,8 +5,7 @@ set echo off
 set heading off
 
 @apxremov.sql;
-create pluggable database orclpdb181 admin user pdb_adm identified by Oradoc_db1
-file_name_convert=('/u02/app/oracle/oradata/ORCL/pdbseed/','/u02/app/oracle/oradata/ORCL/ORCLPDB181/');
+create pluggable database orclpdb181 admin user pdb_adm identified by Oradoc_db1 file_name_convert=('/u02/app/oracle/oradata/ORCL/pdbseed/','/u02/app/oracle/oradata/ORCL/ORCLPDB181/');
 alter pluggable database orclpdb181 open read write;
 alter pluggable database all save state;
 Alter session set container = ORCLPDB181;
