@@ -42,12 +42,16 @@ All of my code has been assembled from the following sources:
 #### APEX
 * Download [the latest version of APEX](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) and unzip it in the path ~/docker/. 
 ```console
-hayden@mac:~/docker$ mv ~/Downloads/apex_5.1.4.zip .
-hayden@mac:~/docker$ unzip apex_5.1.4.zip
+hayden@mac:~/docker$ mkdir apex
+hayden@mac:~/docker$ cd apex/
+hayden@mac:~/docker/apex$ mv ~/Downloads/apex_5.1.4.zip .
+hayden@mac:~/docker/apex$ unzip apex_5.1.4.zip
+[...]
+hayden@mac:~/docker/apex$ mv apex 5.1.4
 ```
 * Download my database configuration script: [install_apex514.sh](https://github.com/hhudson/docker_apex/blob/master/install_apexpdb514.sh) and move it to the directory you just created ~/docker/apex/. Make sure you replace the email on line 37 with your own email.
 ```console
-hayden@mac:~/docker/apex$ mv ~/Downloads/install_apex514.sh .
+hayden@mac:~/docker/apex/5.1.4$ mv ~/Downloads/install_apex514.sh .
 ```
 
 #### ORDS
@@ -99,7 +103,7 @@ hayden@mac:~$ docker run -d -it \
 -e TZ=America/New_york \
 --network=oracle_network \
 -v ~/docker/oracle:/ORCL \
--v ~/docker/apex:/tmp/apex \
+-v ~/docker/apex/5.1.4:/tmp/apex \
 store/oracle/database-enterprise:12.2.0.1
 ```
 
@@ -242,7 +246,7 @@ hayden@mac:~$ docker run -t -i \
   -e APEX_REST_PASS=oracle \
   -e ORDS_PASS=oracle \
   -e SYS_PASS=Oradoc_db1 \
-  --volume ~/docker/apex/images:/ords/apex-images \
+  --volume ~/docker/apex/5.1.4/images:/ords/apex-images \
   -p 32514:8080 \
   ords:3.0.12
 ```
