@@ -11,7 +11,7 @@ alter pluggable database all save state;
 Alter session set container = ORCLPDB181;
 @apexins.sql SYSAUX SYSAUX TEMP /i/;
 @apex_rest_config_core.sql oracle oracle;
-alter session set container = CDB$ROOT;
+alter session set container = CDB\$ROOT;
 alter user apex_public_user identified by oracle account unlock;
 Alter session set container = ORCLPDB181;
 declare
