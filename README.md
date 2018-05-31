@@ -26,10 +26,10 @@
 ## Intro
 
 Docker is a radical way to host an Oracle APEX environment on your computer that:
-1. minimizes the strain you impose on your system’s memory 
-1. maximizes your potential to version and share your database configuration. 
+1. minimizes the strain you impose on your system’s memory
+1. maximizes your potential to version and share your database configuration.
 
-This post was made to support of a [youtube video](https://www.youtube.com/watch?v=WlkCN516OUI) I made. In this post, I’m going to cover the details of running the latest version of APEX from scratch on your computer, using Docker. 
+This post was made to support of a [youtube video](https://www.youtube.com/watch?v=WlkCN516OUI) I made. In this post, I’m going to cover the details of running the latest version of APEX from scratch on your computer, using Docker.
 
 ### References
 
@@ -40,18 +40,18 @@ All of my code has been assembled from the following sources:
 ## Ingredients
 
 #### APEX
-* Download [the latest version of APEX](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) and unzip it in the path ~/docker/. 
+* Download [the latest version of APEX](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) and unzip it in the path ~/docker/.
 ```console
 hayden@mac:~/docker$ mkdir apex
 hayden@mac:~/docker$ cd apex/
-hayden@mac:~/docker/apex$ mv ~/Downloads/apex_5.1.4.zip .
-hayden@mac:~/docker/apex$ unzip apex_5.1.4.zip
+hayden@mac:~/docker/apex$ mv ~/Downloads/apex_18.1.zip .
+hayden@mac:~/docker/apex$ unzip apex_18.1.zip
 [...]
-hayden@mac:~/docker/apex$ mv apex 5.1.4
+ayden@mac:~/docker/apex$ mv apex 18.1.0
 ```
-* Download my database configuration script: [install_apex514.sh](https://github.com/hhudson/docker_apex/blob/master/install_apexpdb514.sh) and move it to the directory you just created ~/docker/apex/. Make sure you replace the email on line 37 with your own email.
+* Download my database configuration script: [install_apex181.sh](https://github.com/hhudson/docker_apex/blob/master/install_apexpdb181.sh) and move it to the directory you just created ~/docker/apex/. Make sure you replace the email on line 37 with your own email.
 ```console
-hayden@mac:~/docker/apex/5.1.4$ mv ~/Downloads/install_apex514.sh .
+hayden@mac:~/docker/apex/18.1.0$ mv ~/Downloads/install_apex181.sh .
 ```
 
 #### ORDS
@@ -63,7 +63,7 @@ hayden@mac:~/docker/ords$ git clone https://github.com/martindsouza/docker-ords.
 * Download [the latest version of ORDS](http://www.oracle.com/technetwork/developer-tools/rest-data-services/downloads/index.html). Unzip it in the same folder ~/docker/ords/.
 ```console
 hayden@mac:~/docker/ords$ mv ~/Downloads/ords.17.4.1.353.06.48.zip .
-hayden@mac:~/docker/ords$ unzip ords.17.4.1.353.06.48.zip 
+hayden@mac:~/docker/ords$ unzip ords.17.4.1.353.06.48.zip
 ```
 
 
@@ -75,13 +75,13 @@ Client:
  Version:	18.03.0-ce
  ...
 ```
-* Visit store.docker.com to accept the Oracle terms and conditions for using their database image: 
+* Visit store.docker.com to accept the Oracle terms and conditions for using their database image:
     1. login
     1. search for 'oracle enterprise edition'
     1. agree to the terms and conditions.
 
 ## Create the oracle container
-Now that we have all of these prerequisites assembled, let’s start by kicking off your Oracle database and installing the latest version of APEX. 
+Now that we have all of these prerequisites assembled, let’s start by kicking off your Oracle database and installing the latest version of APEX.
 
 #### 2 small pieces of configuration
 
@@ -103,11 +103,15 @@ hayden@mac:~$ docker run -d -it \
 -e TZ=America/New_york \
 --network=oracle_network \
 -v ~/docker/oracle:/ORCL \
+<<<<<<< HEAD
 -v ~/docker/apex/5.1.4:/tmp/apex \
+=======
+-v ~/docker/apex/18.1.0:/tmp/apex \
+>>>>>>> apex_18.1
 store/oracle/database-enterprise:12.2.0.1
 ```
 
-Let's walk through this command  - 
+Let's walk through this command  -
 
 1. You’ve given this container the name ‘oracle’, which means other containers on the ‘oracle_network’ can refer to it by this name
 You map the container’s database port 1521 to external port 32122.
@@ -117,7 +121,7 @@ You map the container’s database port 1521 to external port 32122.
 1. You also mount the local folder ~/docker/apex to the container.
 1. The last line in this ‘docker run’ command refers to the official oracle database image on the docker repository. This will work if you’ve already accepted  their license agreement on store.docker.com
 
-Depending on the processing power of your computer, your oracle container may take over 5 minutes to start up. In the background, know that a ton of configuration scripts are being run inside your container, building the database and populating your mounted ~/docker/oracle folder with around 6GB worth of configuration files. 
+Depending on the processing power of your computer, your oracle container may take over 5 minutes to start up. In the background, know that a ton of configuration scripts are being run inside your container, building the database and populating your mounted ~/docker/oracle folder with around 6GB worth of configuration files.
 
 You can check the status of your container with the command:
 ```console
@@ -138,8 +142,8 @@ The configuration is easy to kick-off:
 ```console
 hayden@mac:~$ docker exec -it oracle bash
 [oracle@221b75906a65 /]$ cd /tmp/apex/
-[oracle@221b75906a65 apex]$ chmod +x install_apexpdb514.sh
-[oracle@221b75906a65 apex]$ ./install_apexpdb514.sh
+[oracle@221b75906a65 apex]$ chmod +x install_apexpdb181.sh
+[oracle@221b75906a65 apex]$ ./install_apexpdb181.sh
 ```
 
 
@@ -151,30 +155,32 @@ You start by 1st removing the existing APEX installation in the container databa
 
 
 ```sql
-create pluggable database orclpdb514 admin user pdb_adm identified by Oradoc_db1
-file_name_convert=('/u02/app/oracle/oradata/ORCL/pdbseed/','/u02/app/oracle/oradata/ORCL/ORCLPDB514/');
+create pluggable database orclpdb181 admin user pdb_adm identified by Oradoc_db1
+file_name_convert=('/u02/app/oracle/oradata/ORCL/pdbseed/','/u02/app/oracle/oradata/ORCL/ORCLPDB181/');
 ```
-You then proceed to create a new pdb with 514 in the name because we plan to install APEX 5.1.4.
+You then proceed to create a new pdb with 181 in the name because we plan to install APEX 18.1.
 
 ```sql
-alter pluggable database orclpdb514 open read write;
+alter pluggable database orclpdb181 open read write;
 alter pluggable database all save state;
 ```
 You open the pdb.
 
 ```sql
-Alter session set container = ORCLPDB514;
+Alter session set container = ORCLPDB181;
 @apexins.sql SYSAUX SYSAUX TEMP /i/;
 ```
-You install APEX 5.1.4 in the new pdb - - this step takes a while
+You install APEX 18.1 in the new pdb - - this step takes a while
 
 ```sql
 @apex_rest_config_core.sql oracle oracle;
+alter session set container = CDB\$ROOT;
 alter user apex_public_user identified by oracle account unlock;
 ```
 Finally, you configure APEX to communicate with ORDS
 
 ```sql
+Alter session set container = ORCLPDB181;
 declare
     l_acl_path varchar2(4000);
     l_apex_schema varchar2(100);
@@ -235,36 +241,41 @@ I’d offer to share my own with you but doing so may violate Oracle’s terms a
 For this final step - You’ll want to wait for your apex installation script to complete before going further. In this step, you’ll spin up your ORDS container that will talk to your Oracle database and finally be able to access your APEX web interface.
 ```console
 hayden@mac:~$ docker run -t -i \
-  --name ords_514 \
+  --name ords_181 \
   --network=oracle_network \
   -e TZ=America/Edmonton \
   -e DB_HOSTNAME=oracle \
   -e DB_PORT=1521 \
-  -e DB_SERVICENAME=orclpdb514.localdomain \
+  -e DB_SERVICENAME=orclpdb181.localdomain \
   -e APEX_PUBLIC_USER_PASS=oracle \
   -e APEX_LISTENER_PASS=oracle \
   -e APEX_REST_PASS=oracle \
   -e ORDS_PASS=oracle \
   -e SYS_PASS=Oradoc_db1 \
+<<<<<<< HEAD
   --volume ~/docker/apex/5.1.4/images:/ords/apex-images \
   -p 32514:8080 \
+=======
+  --volume ~/docker/apex/18.1.0/images:/ords/apex-images \
+  -p 32181:8080 \
+>>>>>>> apex_18.1
   ords:3.0.12
 ```
 
 Let’s walk through this command
-1. You name the container ords_514 to match the name of the oracle pluggable database and APEX version because that gives the option to simultaneously spin up other ords containers that serve up different APEX installations on different pdbs in your multitenant oracle database. Next time you want to start this container, to state the possibly obvious, you’d simply run docker start ords_514
+1. You name the container ords_181 to match the name of the oracle pluggable database and APEX version because that gives the option to simultaneously spin up other ords containers that serve up different APEX installations on different pdbs in your multitenant oracle database. Next time you want to start this container, to state the possibly obvious, you’d simply run docker start ords_181
 1. As before, you place this container on the oracle_network that you created so that it can communicate with the oracle container.
 You set the appropriate timezone
-1. Next, we pass in some configuration property values necessary for the ords installation. 
+1. Next, we pass in some configuration property values necessary for the ords installation.
 1. You identify the name of the db_hostname to match the name of your db container
 1. You let ords know that it should communicate with the db on port 1521
 1. You instruct this installation of ords to listen for the pdb that we specially configured with the latest version of APEX
 You then pass in the appropriate values for the passwords for the database users APEX_PUBLIC_USER, APEX_LISTENER, APEX_REST, ORDS and SYS
 1. You mount the local apex images folder so that ORDS can serve them up appropriately
-1.You map the container’s port 8080 to port 32514 so you can access it in your browser on port 32514
+1.You map the container’s port 8080 to port 32181 so you can access it in your browser on port 32181
 1. Finally you instruct your container to build on the docker image that you built
 
-After running this command and getting no error messages, we can now switch to a browser to confirm that we’re done: [http://localhost:32514/ords](http://localhost:32514/ords)
+After running this command and getting no error messages, we can now switch to a browser to confirm that we’re done: [http://localhost:32181/ords](http://localhost:32181/ords)
 
 You can now log into your APEX Internal workspace with the values set by the APEX installation script you ran earlier: username ADMIN, password Oradoc_db1.
 
@@ -276,22 +287,20 @@ if you
 2. push your ords image to your docker hub
 
 For your colleagues this would mean:
-* No downloading ORDS 
+* No downloading ORDS
 * No cloning Martin D’Souza’s git repo
-* No performing any configuration on the oracle container, including installing APEX. 
+* No performing any configuration on the oracle container, including installing APEX.
 
 ### Suggestion
 
-* Use a private github repo and pay for additional space. With [Git LFS](https://git-lfs.github.com/) and $5/month you can buy 50gb worth of space and preserve a library of database snapshots that you and your team mates can clone into your ~/docker/oracle folder. 
+* Use a private github repo and pay for additional space. With [Git LFS](https://git-lfs.github.com/) and $5/month you can buy 50gb worth of space and preserve a library of database snapshots that you and your team mates can clone into your ~/docker/oracle folder.
     * With this setup the docker command for spinning up the Oracle container for the 1st time would be the same but, the execution would be faster because the docker container would not need to build the database.
 
 
 ### Disclaimer
 
-All of these recommendations are of subject to the constraints of your Oracle License agreement. 
+All of these recommendations are of subject to the constraints of your Oracle License agreement.
 
 ## Next steps
 
 I have collected some thoughts on how to use your freshly minted Oracle APEX Dev environment and collaborate with your colleages in the following [blog post](https://2122.IO/apex/f?p=BLOG:SDLC).
-
-
