@@ -239,7 +239,7 @@ For this final step - You’ll want to wait for your apex installation script to
 hayden@mac:~$ docker run -t -i \
   --name ords_181 \
   --network=oracle_network \
-  -e TZ=America/Edmonton \
+  -e TZ=America/New_york \
   -e DB_HOSTNAME=oracle \
   -e DB_PORT=1521 \
   -e DB_SERVICENAME=orclpdb181.localdomain \
