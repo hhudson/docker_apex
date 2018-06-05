@@ -103,11 +103,7 @@ hayden@mac:~$ docker run -d -it \
 -e TZ=America/New_york \
 --network=oracle_network \
 -v ~/docker/oracle:/ORCL \
-<<<<<<< HEAD
--v ~/docker/apex/5.1.4:/tmp/apex \
-=======
 -v ~/docker/apex/18.1.0:/tmp/apex \
->>>>>>> apex_18.1
 store/oracle/database-enterprise:12.2.0.1
 ```
 
@@ -252,13 +248,8 @@ hayden@mac:~$ docker run -t -i \
   -e APEX_REST_PASS=oracle \
   -e ORDS_PASS=oracle \
   -e SYS_PASS=Oradoc_db1 \
-<<<<<<< HEAD
-  --volume ~/docker/apex/5.1.4/images:/ords/apex-images \
-  -p 32514:8080 \
-=======
   --volume ~/docker/apex/18.1.0/images:/ords/apex-images \
   -p 32181:8080 \
->>>>>>> apex_18.1
   ords:3.0.12
 ```
 
